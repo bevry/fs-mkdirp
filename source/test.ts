@@ -6,14 +6,15 @@ import { join } from 'path'
 import { equal, deepEqual } from 'assert-helpers'
 import kava from 'kava'
 import { isAccessible } from '@bevry/fs-accessible'
+import promiseErrback from 'promise-errback'
 
 // local
 import mkdirp from './index.js'
 
 kava.suite('@bevry/fs-mkdirp', function (suite, test) {
 	test('works as expected', function (done) {
-		Promise.resolve()
-			.then(async function () {
+		promiseErrback(
+			Promise.resolve().then(async function () {
 				// prepare the paths
 				const root = join(tmpdir(), `bevry-fs-mkdirp-${Math.random()}`)
 				const dir1 = join(root, 'dir1', 'nested1')
@@ -26,9 +27,8 @@ kava.suite('@bevry/fs-mkdirp', function (suite, test) {
 					[true, true],
 					'creations were as expected'
 				)
-			})
-			.then(() => done())
-			.catch((err) => done(err))
-		// finally breaks early node support
+			}),
+			done
+		)
 	})
 })
